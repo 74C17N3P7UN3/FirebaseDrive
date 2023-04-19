@@ -5,10 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFolder } from '@fortawesome/free-solid-svg-icons'
 
 const Folder = ({ folder }) => (
-   <Button as={Link} to={`/folder/${folder.id}`} variant='outline-dark' className='text-truncate w-100'>
+   <Button
+      as={Link}
+      to={`/folder/${folder.id}`}
+      state={{ folder: folder }}
+      variant='outline-dark'
+      className='text-truncate w-100'
+   >
       <FontAwesomeIcon icon={faFolder} style={{ marginRight: '10px' }} />
       {folder.name}
-   </Button>
+   </Button >
 )
 
 export default Folder

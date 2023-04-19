@@ -10,7 +10,7 @@ const ACTIONS = {
    UPDATE_FOLDER: 'UPDATE_FOLDER',
 }
 
-const ROOT_FOLDER = { name: 'Root', id: null, path: [] }
+export const ROOT_FOLDER = { name: 'Root', id: null, path: [] }
 
 const reducer = (state, { type, payload }) => {
    switch (type) {
@@ -36,7 +36,7 @@ const reducer = (state, { type, payload }) => {
    }
 }
 
-export const useFolder = (folderId = null, folder = null) => {
+export const useFolder = (folder = null, folderId = null) => {
    const { currentUser } = useAuth()
 
    const [state, dispatch] = useReducer(reducer, {
@@ -85,7 +85,9 @@ export const useFolder = (folderId = null, folder = null) => {
          dispatch({
             type: ACTIONS.SET_CHILD_FOLDERS,
             payload: {
-               childFolders: snapshot.docs.map(database.formatDoc)
+               childFolders: snapshot.docs
+                  .map(database.formatDoc)
+                  .sort((a, b) => a.name.localeCompare(b.name)),
             }
          })
       })

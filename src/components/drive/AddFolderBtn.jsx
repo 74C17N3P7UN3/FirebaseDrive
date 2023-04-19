@@ -7,6 +7,7 @@ import { faFolderPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { useAuth } from '../../contexts/AuthContext'
 import { database } from '../../firebase'
+import { ROOT_FOLDER } from '../../hooks/useFolder'
 
 const AddFolderBtn = ({ currentFolder }) => {
    const [open, setOpen] = useState(false)
@@ -22,11 +23,18 @@ const AddFolderBtn = ({ currentFolder }) => {
 
       if (currentFolder == null) return
 
+      const path = [...currentFolder.path]
+      if (currentFolder !== ROOT_FOLDER)
+         path.push({
+            id: currentFolder.id,
+            name: currentFolder.name,
+         })
+
       addDoc(database.folders, {
          createdAt: database.timestamp(),
          name: name,
          parentId: currentFolder.id,
-         // path,
+         path: path,
          userId: currentUser.uid,
       })
 
