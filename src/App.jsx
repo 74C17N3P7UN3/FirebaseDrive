@@ -6,6 +6,8 @@ import {
    Profile,
    Signup,
    UpdateProfile,
+
+   Dashboard,
 } from './components'
 import { AuthProvider } from './contexts/AuthContext'
 import { PrivateRoute, PublicRoute } from './routes'
@@ -23,6 +25,14 @@ const App = () => (
             } />
             <Route path='/forgot-password' element={
                <PublicRoute Component={ForgotPassword} />
+            } />
+
+            {/* Drive */}
+            <Route exact path='/' element={
+               <PrivateRoute Component={Dashboard} />
+            } />
+            <Route exact path='/folder/:folderId' element={
+               <PrivateRoute Component={Dashboard} />
             } />
 
             {/* Profile */}
