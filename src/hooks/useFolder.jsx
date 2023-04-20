@@ -6,6 +6,7 @@ import { database } from '../firebase'
 
 const ACTIONS = {
    SELECT_FOLDER: 'SELECT_FOLDER',
+   SET_CHILD_FILES: 'SET_CHILD_FILES',
    SET_CHILD_FOLDERS: 'SET_CHILD_FOLDERS',
    UPDATE_FOLDER: 'UPDATE_FOLDER',
 }
@@ -20,6 +21,11 @@ const reducer = (state, { type, payload }) => {
             childFolders: [],
             folder: payload.folder,
             folderId: payload.folderId,
+         }
+      case ACTIONS.SET_CHILD_FILES:
+         return {
+            ...state,
+            childFiles: payload.childFiles,
          }
       case ACTIONS.SET_CHILD_FOLDERS:
          return {
@@ -46,6 +52,7 @@ export const useFolder = (folder = null, folderId = null) => {
       folderId,
    })
 
+   // SELECT_FOLDER
    useEffect(() => {
       dispatch({
          type: ACTIONS.SELECT_FOLDER,
@@ -53,6 +60,47 @@ export const useFolder = (folder = null, folderId = null) => {
       })
    }, [folder, folderId])
 
+   // SET_CHILD_FILES
+   useEffect(() => {
+      const condition = and(
+         where('folderId', '==', folderId),
+         where('userId', '==', currentUser.uid)
+      )
+      const q = query(database.files, condition)
+
+      return onSnapshot(q, (snapshot) => {
+         dispatch({
+            type: ACTIONS.SET_CHILD_FILES,
+            payload: {
+               childFiles: snapshot.docs
+                  .map(database.formatDoc)
+                  .sort((a, b) => a.name.localeCompare(b.name)),
+            }
+         })
+      })
+   }, [currentUser, folderId])
+
+   // SET_CHILD_FOLDERS
+   useEffect(() => {
+      const condition = and(
+         where('parentId', '==', folderId),
+         where('userId', '==', currentUser.uid)
+      )
+      const q = query(database.folders, condition)
+
+      return onSnapshot(q, (snapshot) => {
+         dispatch({
+            type: ACTIONS.SET_CHILD_FOLDERS,
+            payload: {
+               childFolders: snapshot.docs
+                  .map(database.formatDoc)
+                  .sort((a, b) => a.name.localeCompare(b.name)),
+            }
+         })
+      })
+   }, [currentUser, folderId])
+
+   // UPDATE_FOLDER
    useEffect(() => {
       if (folderId == null) {
          return dispatch({
@@ -73,25 +121,6 @@ export const useFolder = (folder = null, folderId = null) => {
          })
       })
    }, [folderId])
-
-   useEffect(() => {
-      const condition = and(
-         where('parentId', '==', folderId),
-         where('userId', '==', currentUser.uid)
-      )
-      const q = query(database.folders, condition)
-
-      return onSnapshot(q, (snapshot) => {
-         dispatch({
-            type: ACTIONS.SET_CHILD_FOLDERS,
-            payload: {
-               childFolders: snapshot.docs
-                  .map(database.formatDoc)
-                  .sort((a, b) => a.name.localeCompare(b.name)),
-            }
-         })
-      })
-   }, [currentUser, folderId])
 
    return state
 }

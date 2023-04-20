@@ -5,6 +5,7 @@ import {
    serverTimestamp,
    getFirestore
 } from 'firebase/firestore'
+import { getStorage } from 'firebase/storage'
 
 const app = initializeApp({
    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -29,3 +30,5 @@ export const database = {
    },
    timestamp: serverTimestamp,
 }
+
+export const storage = getStorage(app)

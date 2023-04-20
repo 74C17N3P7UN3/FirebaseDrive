@@ -47,6 +47,7 @@ const AddFolderBtn = ({ currentFolder }) => {
          <Button
             size='md'
             variant='outline-success'
+            style={{ width: '50px' }}
             onClick={openModal}
          >
             <FontAwesomeIcon icon={faFolderPlus} />

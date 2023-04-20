@@ -1,13 +1,17 @@
+import AddFileBtn from './AddFileBtn'
 import AddFolderBtn from './AddFolderBtn'
+import Breadcrumbs from './Breadcrumbs'
 import Dashboard from './Dashboard'
+import File from './File'
 import Folder from './Folder'
-import FolderBreadcrumbs from './FolderBreadcrumbs'
 import Navbar from './Navbar'
 
 export {
+   AddFileBtn,
    AddFolderBtn,
+   Breadcrumbs,
    Dashboard,
+   File,
    Folder,
-   FolderBreadcrumbs,
    Navbar,
 }
