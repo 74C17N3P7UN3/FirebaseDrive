@@ -1,3 +1,11 @@
+import {
+   addDoc,
+   and,
+   getDocs,
+   query,
+   updateDoc,
+   where,
+} from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { useState } from 'react'
 import { ProgressBar, Toast } from 'react-bootstrap'
@@ -10,7 +18,6 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../../contexts/AuthContext'
 import { database, storage } from '../../firebase'
 import { ROOT_FOLDER } from '../../hooks/useFolder'
-import { addDoc } from 'firebase/firestore'
 
 const AddFileBtn = ({ currentFolder }) => {
    const [uploadingFiles, setUploadingFiles] = useState([])
@@ -62,12 +69,27 @@ const AddFileBtn = ({ currentFolder }) => {
             setUploadingFiles((prev) => prev.filter((file) => file.id !== id))
 
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-               addDoc(database.files, {
-                  createdAt: database.timestamp(),
-                  folderId: currentFolder.id,
-                  name: file.name,
-                  url: downloadURL,
-                  userId: currentUser.uid,
+               const condition = and(
+                  where('folderId', '==', currentFolder.id),
+                  where('name', '==', file.name),
+                  where('userId', '==', currentUser.uid)
+               )
+               const q = query(database.files, condition)
+
+               getDocs(q).then((docs) => {
+                  const existingFile = docs.docs[0]
+
+                  if (existingFile) updateDoc(existingFile.ref, {
+                     createdAt: database.timestamp(),
+                     url: url,
+                  })
+                  else addDoc(database.files, {
+                     createdAt: database.timestamp(),
+                     folderId: currentFolder.id,
+                     name: file.name,
+                     url: downloadURL,
+                     userId: currentUser.uid,
+                  })
                })
             })
          }

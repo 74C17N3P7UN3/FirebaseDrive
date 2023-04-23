@@ -1,4 +1,11 @@
-import { and, doc, getDoc, onSnapshot, query, where } from 'firebase/firestore'
+import {
+   and,
+   doc,
+   getDoc,
+   onSnapshot,
+   query,
+   where,
+} from 'firebase/firestore'
 import { useEffect, useReducer } from 'react'
 
 import { useAuth } from '../contexts/AuthContext'
